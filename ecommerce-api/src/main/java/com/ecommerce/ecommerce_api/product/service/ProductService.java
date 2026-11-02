@@ -2,11 +2,13 @@ package com.ecommerce.ecommerce_api.product.service;
 
 import com.ecommerce.ecommerce_api.product.entity.Product;
 import com.ecommerce.ecommerce_api.product.repository.ProductRepository;
+import com.ecommerce.ecommerce_api.product.specification.ProductSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,9 +38,9 @@ public class ProductService {
                     "Page number cannot be negative"
             );
         }
-        if(page<1 || page > 100){
+        if(size<1 || size > 100){
             throw  new IllegalArgumentException(
-                    "Page size must be bewteen 1 and 100"
+                    "Page size must be between 1 and 100"
             );
         }
         if(minPrice!=null && minPrice.signum()<0){
@@ -51,7 +53,7 @@ public class ProductService {
                     "Max price cannot be negative"
             );
         }
-        if(minPrice!=null && maxPrice!=null & minPrice.compareTo(maxPrice)>0){
+        if(minPrice!=null && maxPrice!=null && minPrice.compareTo(maxPrice)>0){
             throw new IllegalArgumentException(
                     "Max price cannot be smaller than min price"
             );
@@ -73,42 +75,16 @@ public class ProductService {
                 Sort.by(sortDirection, sortBy)
         );
 
-        String searchName =
-                name == null ? "" : name.trim();
 
-        if(minPrice!=null && maxPrice!=null){
-            return repository
-                    .findByActiveTrueAndPriceBetween(
-                            minPrice,
-                            maxPrice,
-                            pageable
-                    );
-        }
+       //Build dynamic filtering conditions
+        Specification specification = ProductSpecification.filterProducts(
+                name,
+                minPrice,
+                maxPrice
+        );
 
-        if(minPrice!=null){
-            return repository.findByActiveTrueAndPriceGreaterThanEqual(
-                    minPrice,
-                    pageable
-            );
-        }
-
-        if(maxPrice!=null){
-            return repository
-                    .findByActiveTrueAndPriceLessThanEqual(
-                            maxPrice,
-                            pageable
-                    );
-        }
-
-        if(!searchName.isEmpty()){
-            return repository
-                    .findByNameContainingIgnoreCase(
-                            searchName,
-                            pageable
-                    );
-        }
-
-        return repository.findByActiveTrue(pageable);
+        //Execute query
+        return repository.findAll(specification, pageable);
 
     }
 }
