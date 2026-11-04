@@ -83,7 +83,7 @@ public class Product {
         return stockQuantity;
     }
 
-    public boolean setActive() {
+    public boolean getActive() {
         return active;
     }
 

@@ -1,13 +1,15 @@
 package com.ecommerce.ecommerce_api.product.controller;
 
+import com.ecommerce.ecommerce_api.product.dto.CreateProductRequestt;
+import com.ecommerce.ecommerce_api.product.dto.ProductResponse;
+import com.ecommerce.ecommerce_api.product.dto.UpdateProductRequest;
 import com.ecommerce.ecommerce_api.product.entity.Product;
 import com.ecommerce.ecommerce_api.product.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
@@ -15,7 +17,6 @@ import java.math.BigDecimal;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    @Autowired
     private final ProductService productService;
 
     public ProductController(ProductService productService){
@@ -23,8 +24,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public Page<Product> getProducts(
-            @RequestParam(defaultValue = "1") int page,
+    public Page<ProductResponse> getProducts(
+            @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction,
@@ -41,6 +42,36 @@ public class ProductController {
                 minPrice,
                 maxPrice
         );
+    }
+
+    //@RequestBody	Converts the incoming JSON into CreateProductRequest
+    //@PostMapping	Maps HTTP POST requests to /api/products
+    //@Valid	Triggers the DTO validation annotations
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProductResponse createProduct(@Valid @RequestBody CreateProductRequestt request){
+        return productService.createProduct(request);
+    }
+
+    //@PathVariable extracts id from the URL.
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ProductResponse updateProduct(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateProductRequest request){
+        return productService.updateProduct(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ProductResponse deleteProduct(@PathVariable Long id){
+        return productService.deleteProduct(id);
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ProductResponse getProduct(@PathVariable Long id){
+        return productService.getProductId(id);
     }
 
 }

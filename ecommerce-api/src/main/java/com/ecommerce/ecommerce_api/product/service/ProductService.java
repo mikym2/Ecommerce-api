@@ -1,5 +1,9 @@
 package com.ecommerce.ecommerce_api.product.service;
 
+import com.ecommerce.ecommerce_api.exception.ResourceNotFoundException;
+import com.ecommerce.ecommerce_api.product.dto.CreateProductRequestt;
+import com.ecommerce.ecommerce_api.product.dto.ProductResponse;
+import com.ecommerce.ecommerce_api.product.dto.UpdateProductRequest;
 import com.ecommerce.ecommerce_api.product.entity.Product;
 import com.ecommerce.ecommerce_api.product.repository.ProductRepository;
 import com.ecommerce.ecommerce_api.product.specification.ProductSpecification;
@@ -17,14 +21,13 @@ import java.util.List;
 @Service
 public class ProductService {
 
-    @Autowired
-    private ProductRepository repository;
+    private final ProductRepository repository;
 
     public ProductService(ProductRepository repository){
         this.repository = repository;
     }
 
-    public Page<Product> getProducts(
+    public Page<ProductResponse> getProducts(
             int page,
             int size,
             String sortBy,
@@ -84,7 +87,65 @@ public class ProductService {
         );
 
         //Execute query
-        return repository.findAll(specification, pageable);
+        Page<Product> products = repository.findAll(specification, pageable);
+
+        //convert each product in the Page to a productResponse
+        return products.map(ProductResponse::fromEntity);
+
+    }
+
+
+    public ProductResponse createProduct(CreateProductRequestt request){
+
+        Product product = new Product(
+                request.getName(),
+                request.getDescription(),
+                request.getPrice(),
+                request.getStockQuantity()
+        );
+
+         repository.save(product);
+
+         return  ProductResponse.fromEntity(product);
+    }
+
+    public ProductResponse updateProduct(Long id, UpdateProductRequest request){
+        //find the product
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " +id));
+
+        //update its fields
+        product.setName(request.getName().trim());
+        product.setDescription(request.getDescription());
+        product.setPrice(request.getPrice());
+        product.setStockQuantity(request.getStockQuantity());
+
+        repository.save(product);
+        return ProductResponse.fromEntity(product);
+    }
+
+    public ProductResponse deleteProduct(Long id){
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+
+        product.setActive(false);
+
+        repository.save(product);
+        return ProductResponse.fromEntity(product);
+    }
+
+    public ProductResponse getProductId(Long id){
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+
+        if(!product.getActive()){
+            throw new ResourceNotFoundException("Product not found with id: " + id);
+        }else{
+            return ProductResponse.fromEntity(product);
+        }
+
+
+
 
     }
 }
