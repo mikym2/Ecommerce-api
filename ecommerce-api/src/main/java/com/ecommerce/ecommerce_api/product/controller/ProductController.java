@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerce_api.product.controller;
 
 import com.ecommerce.ecommerce_api.product.dto.CreateProductRequestt;
+import com.ecommerce.ecommerce_api.product.dto.ProductPageResponse;
 import com.ecommerce.ecommerce_api.product.dto.ProductResponse;
 import com.ecommerce.ecommerce_api.product.dto.UpdateProductRequest;
 import com.ecommerce.ecommerce_api.product.entity.Product;
@@ -24,7 +25,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public Page<ProductResponse> getProducts(
+    public ProductPageResponse getProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,

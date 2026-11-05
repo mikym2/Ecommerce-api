@@ -1,7 +1,6 @@
-Add a GET-by-ID endpoint – retrieve one product using its ID, returning 404 if it doesn't exist.
-Improve the API response structure – return DTOs instead of exposing JPA entities directly.
+
+
 Add unit tests – test the product service and its business logic without requiring a database.
-Introduce Redis caching – cache product catalog queries and invalidate/update the cache when products are created, updated, or deleted.
 Implement Spring Security with JWT – authentication, registration, and stateless authorization.
 Implement role-based access control (RBAC) – customers and administrators have different permissions.
 Build the order and checkout modules.
@@ -11,3 +10,10 @@ Add integration tests before moving to the frontend.
 - start node js container in project directory: npm.cmd run dev
 - run redis on docker: docker run -d --name ecommerce-redis  -p 6379:6379 redis:7
 - check running containers: docker ps
+- test the container : docker exec -it <container name> redis-cli ping
+
+- connect to redis in docker container to run commands on it : docker exec -it <container name> redis-cli
+- list all the keys in the cache on redis: KEYS *
+- get the value of a key: GET "<KEY>"
+- get remaining time of the value : TTL "<KEY>"
+- DEL <cacheName>::<id>
