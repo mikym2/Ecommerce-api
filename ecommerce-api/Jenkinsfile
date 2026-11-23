@@ -21,8 +21,12 @@ pipeline {
         stage('Build'){
             steps{
                 echo 'Compiling spring boot app'
-                sh 'cd ecommerce-api'
-                sh 'chmod +x mvnw && ./mvnw clean compile '
+
+                 dir('ecommerce-api') {
+                            sh 'chmod +x mvnw'
+                            sh './mvnw clean compile'
+                        }
+
             }
         }
 
