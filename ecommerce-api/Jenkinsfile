@@ -32,7 +32,10 @@ pipeline {
 
         stage('Test'){
             steps{
-                echo 'Exeucting the tests '
+                echo 'Exeucting the tests'
+                dir('ecommerce-api'){
+                            sh './mvnw test'
+                          }
             }
         }
 
@@ -46,9 +49,6 @@ pipeline {
     post{
         success{
           echo 'E-Commerce CI Pipeline completed successfully!'
-          dir('ecommerce-api'){
-            sh './mvnw test'
-          }
         }
 
         failure{
