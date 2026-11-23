@@ -43,7 +43,16 @@ pipeline {
             steps{
                 echo 'Packaging application'
                 dir('ecommerce-api'){
+                    //Generate the executable JAR in target/
                     sh './mvnw package -DskipTests'
+
+                    //Create a seperate deployment directory
+                    sh 'mkdir -p deployment'
+
+                    //Copy the generated executable jar
+                    sh 'cp target/*.jar deployment'
+
+
                 }
             }
         }
