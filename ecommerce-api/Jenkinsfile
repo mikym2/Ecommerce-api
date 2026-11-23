@@ -1,0 +1,54 @@
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Initialize'){
+            steps{
+                echo '========================='
+                echo 'starting the E commerce CI pipeline'
+                echo '========================='
+            }
+        }
+
+        stage('Checkout'){
+            steps {
+                echo 'Source code is ready '
+            }
+        }
+
+        stage('Build'){
+            steps{
+                echo 'Building spring boot app'
+            }
+        }
+
+        stage('Test'){
+            steps{
+                echo 'Exeucting the tests '
+            }
+        }
+
+        stage('Package'){
+            steps{
+                echo 'Packaging application'
+            }
+        }
+    }
+
+    post{
+        success{
+          echo 'E-Commerce CI Pipeline completed successfully!'
+        }
+
+        failure{
+         echo 'E-Commerce CI Pipeline failed!'
+        }
+
+        always{
+        echo 'Pipeline execution finished.'
+        }
+
+    }
+}
