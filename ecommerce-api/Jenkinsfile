@@ -34,14 +34,16 @@ pipeline {
             steps{
                 echo 'Exeucting the tests'
                 dir('ecommerce-api'){
-                            sh './mvnw test'
-                          }
+                     sh './mvnw test'
+                   }
             }
         }
 
         stage('Package'){
             steps{
                 echo 'Packaging application'
+                dir('ecommerce-api'){
+                sh './mvnw package -DskipTests'}
             }
         }
     }
