@@ -47,7 +47,7 @@ pipeline {
         success{
           echo 'E-Commerce CI Pipeline completed successfully!'
           dir('ecommerce-api'){
-            sh './mvn test'
+            sh './mvnw test'
           }
         }
 
