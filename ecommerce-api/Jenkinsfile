@@ -46,6 +46,9 @@ pipeline {
     post{
         success{
           echo 'E-Commerce CI Pipeline completed successfully!'
+          dir('ecommerce-api'){
+            sh './mvn test'
+          }
         }
 
         failure{
