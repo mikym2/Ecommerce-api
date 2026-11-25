@@ -56,6 +56,20 @@ pipeline {
                 }
             }
         }
+
+        stage('Docker Build') {
+            steps {
+                dir('ecommerce-api') {
+                    sh '''
+                        docker build \
+                            -t ecommerce-api:${BUILD_NUMBER} \
+                            -t ecommerce-api:latest \
+                            .
+                    '''
+                }
+            }
+        }
+
     }
 
     post{
